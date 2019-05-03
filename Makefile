@@ -3,6 +3,8 @@ FLAGS = -Wall -Wextra -Werror
 
 EXEC_NAME = avm
 SRC_FILES = main.cpp \
+			Exception.cpp \
+			Factory.cpp \
 
 OBJ_FILES = $(SRC_FILES:.cpp=.o)
 

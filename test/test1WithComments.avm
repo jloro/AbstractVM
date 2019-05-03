@@ -1,0 +1,10 @@
+; -----------
+; jui un commentaire
+; -----------
+push int32(2)
+push int32(3)
+add
+; NINJA
+assert int32(5)
+dump
+exit

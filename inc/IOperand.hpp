@@ -6,7 +6,7 @@
 /*   By: jloro <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/02 16:56:08 by jloro             #+#    #+#             */
-/*   Updated: 2019/05/02 17:03:49 by jloro            ###   ########.fr       */
+/*   Updated: 2019/05/03 14:40:18 by jloro            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,14 @@
 # define IOPERAND_HPP
 
 # include <string>
+# define FLOAT_MAX 3.402823466e+38F
+# define FLOAT_MIN -3.402823466e+38F
+# define DOUBLE_MAX 1.7976931348623158e+308
+# define DOUBLE_MIN -1.7976931348623158e+308
+enum eOperandType {Int8 , Int16, Int32, Float, Double};
+
+static double eLimitsMax[5] = {INT8_MAX, INT16_MAX, INT32_MAX, FLOAT_MAX, DOUBLE_MAX};
+static double eLimitsMin[5] = {INT8_MIN, INT16_MIN, INT32_MIN, FLOAT_MIN, DOUBLE_MIN};
 
 class IOperand
 {

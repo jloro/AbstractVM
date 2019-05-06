@@ -6,7 +6,7 @@
 /*   By: jloro <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/03 10:34:32 by jloro             #+#    #+#             */
-/*   Updated: 2019/05/03 16:08:23 by jloro            ###   ########.fr       */
+/*   Updated: 2019/05/06 16:12:29 by jloro            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,10 +26,12 @@ class Operand : public IOperand
 		Operand(const std::string value, const eOperandType type) : _str(value), _type(type)
 		{
 			if (strtod(value.c_str(), NULL) > eLimitsMax[type])
-				throw Exception("Overflow");
+				throw Exception("Overflow", -1);
 			else if (strtod(value.c_str(), NULL) < eLimitsMin[type])
-				throw Exception("Underflow");
+				throw Exception("Underflow", -1);
 			this->_value = static_cast<T>(strtod(value.c_str(), NULL));
+			while (this->_str.back() == '0' && this->_str.size() != 1)
+				this->_str.pop_back();
 		}
 
 		Operand(const Operand & src) { *this = src; }
@@ -93,7 +95,7 @@ class Operand : public IOperand
 			std::string		value;
 
 			if (rhs.toString().compare("0") == 0)
-				throw Exception("Division by 0");
+				throw Exception("Division by 0", -1);
 			if (rhs.getPrecision() > this->getPrecision())
 				type = rhs.getType();
 			else
@@ -108,7 +110,7 @@ class Operand : public IOperand
 			std::string		value;
 
 			if (rhs.toString().compare("0") == 0)
-				throw Exception("Modulo by 0");
+				throw Exception("Modulo by 0", -1);
 			if (rhs.getPrecision() > this->getPrecision())
 				type = rhs.getType();
 			else

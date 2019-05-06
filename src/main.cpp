@@ -6,7 +6,7 @@
 /*   By: jloro <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/02 17:06:54 by jloro             #+#    #+#             */
-/*   Updated: 2019/05/06 10:25:04 by jloro            ###   ########.fr       */
+/*   Updated: 2019/05/06 15:51:06 by jloro            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,9 +40,9 @@ std::string	readFile(char * file)
 
 	ifs.open(file, std::ifstream::in);
 	if ((ifs.rdstate() & std::ifstream::failbit) != 0)
-		throw Exception("File not found");
+		throw Exception("File not found", -1);
 	if (opendir(file) != NULL)
-		throw Exception("Is a directory");
+		throw Exception("Is a directory", -1);
 	getline(ifs, tmp);
 	while (ifs.good())
 	{
@@ -60,7 +60,7 @@ int main(int argc, char **argv)
 	if (argc > 2)
 	{
 		std::cout << "Usage: ./avm or ./avm file" << std::endl;
-		return 0;
+		return 1;
 	}
 	try
 	{
@@ -73,7 +73,8 @@ int main(int argc, char **argv)
 	}
 	catch (std::exception & e)
 	{
-		std::cout << e.what()<< std::endl;
+		std::cout << e.what() << std::endl;
+		return 1;
 	}
-	return 1;
+	return 0;
 }

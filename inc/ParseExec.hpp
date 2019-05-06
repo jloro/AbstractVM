@@ -6,7 +6,7 @@
 /*   By: jloro <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/03 17:52:59 by jloro             #+#    #+#             */
-/*   Updated: 2019/05/06 11:26:44 by jloro            ###   ########.fr       */
+/*   Updated: 2019/05/06 15:48:42 by jloro            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,11 +28,6 @@
 # define MOD 320
 # define PRINT 557
 # define EXIT 442
-# define INT8 387
-# define INT16 434
-# define INT32 432
-# define FLOAT 534
-# define DOUBLE 635
 
 class ParseExec
 {
@@ -62,6 +57,8 @@ class ParseExec
 		std::stack<const IOperand *>	_stack;
 		std::string						_file;
 		Factory *						_factory;
+		bool							_exit;
+		int								_nbLine;
 };
 
 #endif

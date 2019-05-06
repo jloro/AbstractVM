@@ -1,0 +1,8 @@
+push int8(90);JUI INVISIBLE
+;CACHER
+push int32(98);
+add
+dump
+push int8(56)
+print
+exit

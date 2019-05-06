@@ -1,11 +1,12 @@
 CC = clang++
-FLAGS = -Wall -Wextra -Werror
+FLAGS = -Wall -Wextra -Werror -std=c++11
 
 EXEC_NAME = avm
 SRC_FILES = main.cpp \
 			Exception.cpp \
 			Factory.cpp \
 			ParseExec.cpp \
+			Utils.cpp \
 
 OBJ_FILES = $(SRC_FILES:.cpp=.o)
 

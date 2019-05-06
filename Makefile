@@ -5,6 +5,7 @@ EXEC_NAME = avm
 SRC_FILES = main.cpp \
 			Exception.cpp \
 			Factory.cpp \
+			ParseExec.cpp \
 
 OBJ_FILES = $(SRC_FILES:.cpp=.o)
 

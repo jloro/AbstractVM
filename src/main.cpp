@@ -6,7 +6,7 @@
 /*   By: jloro <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/02 17:06:54 by jloro             #+#    #+#             */
-/*   Updated: 2019/05/03 17:18:33 by jloro            ###   ########.fr       */
+/*   Updated: 2019/05/06 10:25:04 by jloro            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <fstream>
 #include "Exception.hpp"
 #include <dirent.h>
+#include "ParseExec.hpp"
 
 std::string	readStdin(void)
 {
@@ -54,6 +55,7 @@ std::string	readFile(char * file)
 int main(int argc, char **argv)
 {
 	std::string	file;
+	ParseExec	*parse;
 
 	if (argc > 2)
 	{
@@ -66,7 +68,8 @@ int main(int argc, char **argv)
 			file = readStdin();
 		else
 			file = readFile(argv[1]);
-		std::cout << file << std::endl;
+		parse = new ParseExec(file);
+		parse->parse();
 	}
 	catch (std::exception & e)
 	{

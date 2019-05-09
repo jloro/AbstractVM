@@ -1,0 +1,30 @@
+----------------
+push int32(90)
+pop
+pop
+exit
+;;
+----------------
+print
+exit
+;;
+----------------
+push int8(9)
+exit
+print
+;;
+----------------
+assert int8(9)
+exit
+;;
+----------------
+push int8(9)
+div
+exit
+;;
+----------------
+push int8(9)
+push int8(0)
+div
+exit
+;;

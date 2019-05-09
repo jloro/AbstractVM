@@ -6,7 +6,7 @@
 /*   By: jloro <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/06 10:09:37 by jloro             #+#    #+#             */
-/*   Updated: 2019/05/06 16:05:04 by jloro            ###   ########.fr       */
+/*   Updated: 2019/05/09 16:00:39 by jloro            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include <iostream>
 #include <algorithm>
 #include "Utils.hpp"
+#include <iomanip>
 
 /*
  *  Constructors/Desctructors
@@ -27,6 +28,14 @@ ParseExec::ParseExec(const std::string file) : _stack(), _file(file), _factory(n
 
 ParseExec::~ParseExec()
 {
+	const IOperand * tmp;
+
+	while (this->_stack.size() != 0)
+	{
+		tmp = this->_stack.front();
+		this->_stack.pop_front();
+		delete tmp;
+	}
 	delete this->_factory;
 }
 
@@ -84,19 +93,19 @@ void ParseExec::parse(void)
 					this->assert(line.substr(line.find_first_of(' ', 0) + 1, std::string::npos));
 					break;
 				case ADD:
-					this->add();
+					this->calculate('+');
 					break;
 				case SUB:
-					this->sub();
+					this->calculate('-');
 					break;
 				case MUL:
-					this->mul();
+					this->calculate('*');
 					break;
 				case DIV:
-					this->div();
+					this->calculate('/');
 					break;
 				case MOD:
-					this->mod();
+					this->calculate('%');
 					break;
 				case PRINT:
 					this->print();
@@ -117,103 +126,58 @@ void ParseExec::parse(void)
 
 void ParseExec::pop(void)
 {
+	const IOperand *	tmp;
+
 	if (this->_stack.size() == 0)
 		throw Exception("Pop but stack is empty.", this->_nbLine);
-	this->_stack.pop();
+	tmp = this->_stack.front();
+	this->_stack.pop_front();
+	delete tmp;
 }
 
 
 void ParseExec::dump(void)
 {
-	std::stack<const IOperand *>	cpy(this->_stack);
+	std::list<const IOperand *>::iterator	beg = this->_stack.begin();
+	std::list<const IOperand *>::iterator	end = this->_stack.end();
 
-	for (;cpy.size() != 0;cpy.pop())
-		std::cout << cpy.top()->toString() << std::endl;
+	for (;beg != end;beg++)
+		std::cout << (*beg)->toString() << std::endl;
 }
 
-
-void ParseExec::add(void)
+void	ParseExec::calculate(char op)
 {
 	const IOperand *	first;
 	const IOperand *	sec;
 	const IOperand *	res;
 
 	if (this->_stack.size() < 2)
-		throw Exception("Add but stack has less than 2 numbers.", this->_nbLine);
-	first = this->_stack.top();
-	this->_stack.pop();
-	sec = this->_stack.top();
-	this->_stack.pop();
-	res = *sec + *first;
-	this->_stack.push(res);
-}
-
-
-void ParseExec::sub(void)
-{
-	const IOperand *	first;
-	const IOperand *	sec;
-	const IOperand *	res;
-
-	if (this->_stack.size() < 2)
-		throw Exception("Substract but stack has less than 2 numbers.", this->_nbLine);
-	first = this->_stack.top();
-	this->_stack.pop();
-	sec = this->_stack.top();
-	this->_stack.pop();
-	res = *sec - *first;
-	this->_stack.push(res);
-}
-
-
-void ParseExec::mul(void)
-{
-	const IOperand *	first;
-	const IOperand *	sec;
-	const IOperand *	res;
-
-	if (this->_stack.size() < 2)
-		throw Exception("Multiply but stack has less than 2 numbers.", this->_nbLine);
-	first = this->_stack.top();
-	this->_stack.pop();
-	sec = this->_stack.top();
-	this->_stack.pop();
-	res = *sec * *first;
-	this->_stack.push(res);
-}
-
-
-void ParseExec::div(void)
-{
-	const IOperand *	first;
-	const IOperand *	sec;
-	const IOperand *	res;
-
-	if (this->_stack.size() < 2)
-		throw Exception("Divide but stack has less than 2 numbers.", this->_nbLine);
-	first = this->_stack.top();
-	this->_stack.pop();
-	sec = this->_stack.top();
-	this->_stack.pop();
-	res = *sec / *first;
-	this->_stack.push(res);
-}
-
-
-void ParseExec::mod(void)
-{
-	const IOperand *	first;
-	const IOperand *	sec;
-	const IOperand *	res;
-
-	if (this->_stack.size() < 2)
-		throw Exception("Modulo but stack has less than 2 numbers.", this->_nbLine);
-	first = this->_stack.top();
-	this->_stack.pop();
-	sec = this->_stack.top();
-	this->_stack.pop();
-	res = *sec % *first;
-	this->_stack.push(res);
+		throw Exception("Can't calculate, the stack has less than 2 numbers.", this->_nbLine);
+	first = this->_stack.front();
+	this->_stack.pop_front();
+	sec = this->_stack.front();
+	this->_stack.pop_front();
+	switch (op)
+	{
+		case '+':
+			res = *sec + *first;
+			break;
+		case '-':
+			res = *sec - *first;
+			break;
+		case '*':
+			res = *sec * *first;
+			break;
+		case '/':
+			res = *sec / *first;
+			break;
+		case '%':
+			res = *sec % *first;
+			break;
+	}
+	delete sec;
+	delete first;
+	this->_stack.push_front(res);
 }
 
 
@@ -221,10 +185,12 @@ void ParseExec::print(void)
 {
 	const IOperand *	top;
 
-	top = this->_stack.top();
+	if (this->_stack.size() == 0)
+		throw Exception("Stack empty.", this->_nbLine);
+	top = this->_stack.front();
 	if (top->getType() != Int8)
 		throw Exception("Top value isn't an 8-bit integer.", this->_nbLine);
-	std::cout << static_cast<char>(std::stoi(top->toString())) << std::endl;
+	std::cout << static_cast<char>(atoi(top->toString().c_str())) << std::endl;
 }
 
 
@@ -247,7 +213,7 @@ void ParseExec::push(const std::string value)
 	if (nb.compare("") == 0 || !isStrDigits(nb))
 		throw Exception("Number error.", this->_nbLine);
 	toAdd = this->_factory->createOperand(type, nb);
-	this->_stack.push(toAdd);
+	this->_stack.push_front(toAdd);
 }
 
 
@@ -255,14 +221,19 @@ void ParseExec::assert(const std::string value)
 {
 	eOperandType		type;
 	const IOperand *	toCheck;
+	const IOperand *	tmp;
 	bool				err;
 
 	type = getTypeFromStr(value, &err);
 	if (err)
 		throw Exception("Unknown type.", this->_nbLine);
-	toCheck = this->_stack.top();
+	if (this->_stack.size() == 0)
+		throw Exception("Stack empty.", this->_nbLine);
+	toCheck = this->_stack.front();
 	if (toCheck->getType() != type)
 		throw Exception("Assert's wrong, wrong type.", this->_nbLine);
-	if (toCheck->toString().compare(value.substr(value.find_first_of('(', 0) + 1, value.size() - value.find_first_of('(', 0) - 2)) != 0)
+	tmp = this->_factory->createOperand(type, value.substr(value.find_first_of('(', 0) + 1, value.size() - value.find_first_of('(', 0) - 2));
+	if (toCheck->toString().compare(tmp->toString()) != 0)
 		throw Exception("Assert's wrong, wrong value.", this->_nbLine);
+	delete tmp;
 }

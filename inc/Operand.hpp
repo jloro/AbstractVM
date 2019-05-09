@@ -6,7 +6,7 @@
 /*   By: jloro <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/03 10:34:32 by jloro             #+#    #+#             */
-/*   Updated: 2019/05/06 16:12:29 by jloro            ###   ########.fr       */
+/*   Updated: 2019/05/09 16:02:01 by jloro            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,24 +14,25 @@
 # define OPERAND_HPP
 
 # include "IOperand.hpp"
-# include <stdlib.h>
-# include "Exception.hpp"
-# include <cmath>
 # include "Factory.hpp"
+# include "Exception.hpp"
+# include <stdlib.h>
+# include <cmath>
+# include <sstream>
 
 template<typename T>
 class Operand : public IOperand
 {
 	public:
-		Operand(const std::string value, const eOperandType type) : _str(value), _type(type)
+		Operand(const T & value, const eOperandType type) : _value(value), _type(type)
 		{
-			if (strtod(value.c_str(), NULL) > eLimitsMax[type])
-				throw Exception("Overflow", -1);
-			else if (strtod(value.c_str(), NULL) < eLimitsMin[type])
-				throw Exception("Underflow", -1);
-			this->_value = static_cast<T>(strtod(value.c_str(), NULL));
-			while (this->_str.back() == '0' && this->_str.size() != 1)
-				this->_str.pop_back();
+			std::stringstream	ss;
+
+			if (type == Int8)
+				ss << static_cast<int>(value);
+			else
+				ss << value;
+			this->_str = ss.str();
 		}
 
 		Operand(const Operand & src) { *this = src; }

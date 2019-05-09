@@ -6,7 +6,7 @@
 /*   By: jloro <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/02 17:06:54 by jloro             #+#    #+#             */
-/*   Updated: 2019/05/06 15:51:06 by jloro            ###   ########.fr       */
+/*   Updated: 2019/05/09 15:59:02 by jloro            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,11 +70,16 @@ int main(int argc, char **argv)
 			file = readFile(argv[1]);
 		parse = new ParseExec(file);
 		parse->parse();
+		delete parse;
 	}
 	catch (std::exception & e)
 	{
-		std::cout << e.what() << std::endl;
+		std::cout << "Error: " << e.what() << std::endl;
+		while (1)
+			;
 		return 1;
 	}
+	while (1)
+		;
 	return 0;
 }

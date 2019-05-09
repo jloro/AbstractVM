@@ -35,3 +35,4 @@ avm
 
 # Mac OS files
 .DS_Store
+*.dSYM/

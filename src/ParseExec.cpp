@@ -6,7 +6,7 @@
 /*   By: jloro <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/06 10:09:37 by jloro             #+#    #+#             */
-/*   Updated: 2019/05/09 16:00:39 by jloro            ###   ########.fr       */
+/*   Updated: 2019/05/09 16:42:15 by jloro            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -210,7 +210,7 @@ void ParseExec::push(const std::string value)
 	if (err)
 		throw Exception("Unkwown type.", this->_nbLine);
 	nb = value.substr(value.find_first_of('(', 0) + 1, value.size() - value.find_first_of('(', 0) - 2);
-	if (nb.compare("") == 0 || !isStrDigits(nb))
+	if (nb.compare("") == 0 || !isStrDigits(nb) || value.back() != ')')
 		throw Exception("Number error.", this->_nbLine);
 	toAdd = this->_factory->createOperand(type, nb);
 	this->_stack.push_front(toAdd);

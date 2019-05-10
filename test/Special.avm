@@ -10,11 +10,11 @@ push int32(90)
 cos
 dump
 pop
-push int32(90)
+push int32(-6)
 sin
 dump
 pop
-push int32(89)
+push int32(45)
 tan
 dump
 pop

@@ -6,7 +6,7 @@
 /*   By: jloro <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/03 13:55:07 by jloro             #+#    #+#             */
-/*   Updated: 2019/05/06 15:37:59 by jloro            ###   ########.fr       */
+/*   Updated: 2019/05/10 12:39:36 by jloro            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,10 @@ Exception::~Exception() throw() {}
 
 Exception::Exception(void) : std::exception() {}
 
-/*Exception::Exception(const Exception & src) throw() : std::exception()
+Exception::Exception(const Exception & src) throw() : std::exception()
 {
 	*this = src;
-}*/
+}
 
 /*
  *  Operators
@@ -35,6 +35,7 @@ Exception::Exception(void) : std::exception() {}
 Exception & Exception::operator=(const Exception &rhs)
 {
 	this->_msg = rhs.getMsg();
+	this->_line = rhs.getLine();
 	return *this;
 }
 
@@ -43,6 +44,7 @@ Exception & Exception::operator=(const Exception &rhs)
  */
 
 std::string	Exception::getMsg(void) const { return this->_msg; }
+int			Exception::getLine(void) const { return this->_line; }
 
 /*
  *  Utilities

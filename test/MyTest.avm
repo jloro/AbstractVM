@@ -1,0 +1,14 @@
+push int8(45);
+push int32(45);
+add
+dump
+push float(32)
+sub
+push double(0)
+mul
+push int16(42)
+push int16(9)
+add
+add
+dump
+exit

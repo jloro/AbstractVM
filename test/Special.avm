@@ -1,0 +1,22 @@
+push int8(9)
+log
+dump
+pop
+push double(5.5)
+exp
+dump
+pop
+push int32(90)
+cos
+dump
+pop
+push int32(90)
+sin
+dump
+pop
+push int32(89)
+tan
+dump
+pop
+exit
+;;

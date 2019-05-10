@@ -6,7 +6,7 @@
 /*   By: jloro <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/06 10:09:37 by jloro             #+#    #+#             */
-/*   Updated: 2019/05/09 16:42:15 by jloro            ###   ########.fr       */
+/*   Updated: 2019/05/10 11:48:27 by jloro            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,25 @@
  */
 
 ParseExec::ParseExec(const std::string file) : _stack(), _file(file), _factory(new Factory), _exit(false),
-												_nbLine(0) {}
+												_nbLine(0)
+{
+	this->_convert["push"] = PUSH;
+	this->_convert["pop"] = POP;
+	this->_convert["dump"] = DUMP;
+	this->_convert["assert"] = ASSERT;
+	this->_convert["add"] = ADD;
+	this->_convert["sub"] = SUB;
+	this->_convert["mul"] = MUL;
+	this->_convert["div"] = DIV;
+	this->_convert["mod"] = MOD;
+	this->_convert["log"] = LOG;
+	this->_convert["exp"] = EXP;
+	this->_convert["cos"] = COS;
+	this->_convert["tan"] = TAN;
+	this->_convert["sin"] = SIN;
+	this->_convert["print"] = PRINT;
+	this->_convert["exit"] = EXIT;
+}
 
 ParseExec::~ParseExec()
 {
@@ -78,7 +96,7 @@ void ParseExec::parse(void)
 		{
 			line = line.substr(0, line.find_first_of(';', 0));
 			instr = line.substr(0, line.find_first_of(' ', 0));
-			switch(strtoint(instr.c_str()))
+			switch(this->_convert[instr.c_str()])
 			{
 				case PUSH:
 					this->push(line.substr(line.find_first_of(' ', 0) + 1, std::string::npos));
@@ -106,6 +124,21 @@ void ParseExec::parse(void)
 					break;
 				case MOD:
 					this->calculate('%');
+					break;
+				case LOG:
+					this->special('l');
+					break;
+				case EXP:
+					this->special('e');
+					break;
+				case COS:
+					this->special('c');
+					break;
+				case TAN:
+					this->special('t');
+					break;
+				case SIN:
+					this->special('s');
 					break;
 				case PRINT:
 					this->print();
@@ -143,6 +176,39 @@ void ParseExec::dump(void)
 
 	for (;beg != end;beg++)
 		std::cout << (*beg)->toString() << std::endl;
+}
+
+void	ParseExec::special(char op)
+{
+	const IOperand *	top;
+	const IOperand *	toAdd;
+	double				res;
+
+	if (this->_stack.size() == 0)
+		throw Exception("Can't calculate, the stack is empty", this->_nbLine);
+	top = this->_stack.front();
+	this->_stack.pop_front();
+	switch(op)
+	{
+		case 'l':
+			res = ::log(strtod(top->toString().c_str(), NULL));
+			break;
+		case 'e':
+			res = exp(strtod(top->toString().c_str(), NULL));
+			break;
+		case 'c':
+			res = cos(RAD(strtod(top->toString().c_str(), NULL)));
+			break;
+		case 's':
+			res = sin(RAD(strtod(top->toString().c_str(), NULL)));
+			break;
+		case 't':
+			res = tan(RAD(strtod(top->toString().c_str(), NULL)));
+			break;
+	}
+	toAdd = this->_factory->createOperand(Double, std::to_string(res));
+	delete top;
+	this->_stack.push_front(toAdd);
 }
 
 void	ParseExec::calculate(char op)

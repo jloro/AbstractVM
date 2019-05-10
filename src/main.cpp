@@ -6,7 +6,7 @@
 /*   By: jloro <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/02 17:06:54 by jloro             #+#    #+#             */
-/*   Updated: 2019/05/09 15:59:02 by jloro            ###   ########.fr       */
+/*   Updated: 2019/05/10 12:09:07 by jloro            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,11 +75,7 @@ int main(int argc, char **argv)
 	catch (std::exception & e)
 	{
 		std::cout << "Error: " << e.what() << std::endl;
-		while (1)
-			;
 		return 1;
 	}
-	while (1)
-		;
 	return 0;
 }

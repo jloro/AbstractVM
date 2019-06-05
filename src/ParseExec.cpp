@@ -6,7 +6,7 @@
 /*   By: jloro <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/06 10:09:37 by jloro             #+#    #+#             */
-/*   Updated: 2019/06/05 12:10:22 by jloro            ###   ########.fr       */
+/*   Updated: 2019/06/05 13:17:18 by jloro            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include "Exception.hpp"
 #include <sstream>
 #include <iostream>
+#include <iterator>
 #include <algorithm>
 #include "Utils.hpp"
 #include <iomanip>
@@ -24,25 +25,25 @@
  */
 
 ParseExec::ParseExec(const std::string file) : _stack(), _file(file), _factory(new Factory), _exit(false),
-												_nbLine(0)
+	_nbLine(0)
 {
 	this->_map = {
-		{instruction::Push, &ParseExec::push},
-		{instruction::Pop, &ParseExec::push},
-		{instruction::Dump, &ParseExec::push},
-		{instruction::Assert, &ParseExec::push},
-		{instruction::Add, &ParseExec::push},
-		{instruction::Sub, &ParseExec::push},
-		{instruction::Mul, &ParseExec::push},
-		{instruction::Div, &ParseExec::push},
-		{instruction::Mod, &ParseExec::push},
-		{instruction::Log, &ParseExec::push},
-		{instruction::Exp, &ParseExec::push},
-		{instruction::Cos, &ParseExec::push},
-		{instruction::Print, &ParseExec::push},
-		{instruction::Exit, &ParseExec::push},
-		{instruction::Tan, &ParseExec::push},
-		{instruction::Sin, &ParseExec::push},
+		{"push", &ParseExec::push},
+		{"dump", &ParseExec::dump},
+		{"pop", &ParseExec::pop},
+		{"assert", &ParseExec::assert},
+		{"add", &ParseExec::calculate},
+		{"sub", &ParseExec::calculate},
+		{"mul", &ParseExec::calculate},
+		{"div", &ParseExec::calculate},
+		{"mod", &ParseExec::calculate},
+		{"exit", &ParseExec::exit},
+		{"print", &ParseExec::print},
+		{"log", &ParseExec::special},
+		{"cos", &ParseExec::special},
+		{"exp", &ParseExec::special},
+		{"sin", &ParseExec::special},
+		{"tan", &ParseExec::special},
 	};
 }
 
@@ -98,60 +99,25 @@ void ParseExec::parse(void)
 		{
 			line = line.substr(0, line.find_first_of(';', 0));
 			instr = line.substr(0, line.find_first_of(' ', 0));
-			/*switch(this->_convert[instr.c_str()])
-			{
-				case PUSH:
-					this->push(line.substr(line.find_first_of(' ', 0) + 1, std::string::npos));
-					break;
-				case POP:
-					this->pop();
-					break;
-				case DUMP:
-					this->dump();
-					break;
-				case ASSERT:
-					this->assert(line.substr(line.find_first_of(' ', 0) + 1, std::string::npos));
-					break;
-				case ADD:
-					this->calculate('+');
-					break;
-				case SUB:
-					this->calculate('-');
-					break;
-				case MUL:
-					this->calculate('*');
-					break;
-				case DIV:
-					this->calculate('/');
-					break;
-				case MOD:
-					this->calculate('%');
-					break;
-				case LOG:
-					this->special('l');
-					break;
-				case EXP:
-					this->special('e');
-					break;
-				case COS:
-					this->special('c');
-					break;
-				case TAN:
-					this->special('t');
-					break;
-				case SIN:
-					this->special('s');
-					break;
-				case PRINT:
-					this->print();
-					break;
-				case EXIT:
-					this->exit();
-					break;
-				default:
-					throw Exception("Instruction unknown.", this->_nbLine);
-					break;
-			}*/
+			this->_currentInfo = line.substr(line.find_first_of(' ', 0) + 1, std::string::npos);
+
+			std::cout << instr<< std::endl;
+			this->_currentInstr = static_cast<instruction>(std::distance(instructionString.begin(), std::find(instructionString.begin(), instructionString.end(), instr)));
+			//this->_mdap[instr];
+			auto pair = this->_map.find(instr);
+			if (pair != this->_map.end()){
+				(this->(*pair->second))();
+			}
+			else{
+				std::cout << "/shrug"<< std::endl;
+			}
+			/*
+			   case PUSH:
+			   this->push(line.substr(line.find_first_of(' ', 0) + 1, std::string::npos));
+			   break;
+			   throw Exception("Instruction unknown.", this->_nbLine);
+			   break;
+			   */
 		}
 		this->_nbLine++;
 	}
@@ -268,6 +234,7 @@ void ParseExec::print(void)
 
 void ParseExec::exit(void)
 {
+	std::cout << "oui"<< std::endl;
 	this->_exit = true;
 }
 

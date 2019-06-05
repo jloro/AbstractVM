@@ -6,7 +6,7 @@
 /*   By: jloro <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/06 10:09:37 by jloro             #+#    #+#             */
-/*   Updated: 2019/05/10 11:48:27 by jloro            ###   ########.fr       */
+/*   Updated: 2019/06/05 12:10:22 by jloro            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,22 +26,24 @@
 ParseExec::ParseExec(const std::string file) : _stack(), _file(file), _factory(new Factory), _exit(false),
 												_nbLine(0)
 {
-	this->_convert["push"] = PUSH;
-	this->_convert["pop"] = POP;
-	this->_convert["dump"] = DUMP;
-	this->_convert["assert"] = ASSERT;
-	this->_convert["add"] = ADD;
-	this->_convert["sub"] = SUB;
-	this->_convert["mul"] = MUL;
-	this->_convert["div"] = DIV;
-	this->_convert["mod"] = MOD;
-	this->_convert["log"] = LOG;
-	this->_convert["exp"] = EXP;
-	this->_convert["cos"] = COS;
-	this->_convert["tan"] = TAN;
-	this->_convert["sin"] = SIN;
-	this->_convert["print"] = PRINT;
-	this->_convert["exit"] = EXIT;
+	this->_map = {
+		{instruction::Push, &ParseExec::push},
+		{instruction::Pop, &ParseExec::push},
+		{instruction::Dump, &ParseExec::push},
+		{instruction::Assert, &ParseExec::push},
+		{instruction::Add, &ParseExec::push},
+		{instruction::Sub, &ParseExec::push},
+		{instruction::Mul, &ParseExec::push},
+		{instruction::Div, &ParseExec::push},
+		{instruction::Mod, &ParseExec::push},
+		{instruction::Log, &ParseExec::push},
+		{instruction::Exp, &ParseExec::push},
+		{instruction::Cos, &ParseExec::push},
+		{instruction::Print, &ParseExec::push},
+		{instruction::Exit, &ParseExec::push},
+		{instruction::Tan, &ParseExec::push},
+		{instruction::Sin, &ParseExec::push},
+	};
 }
 
 ParseExec::~ParseExec()
@@ -96,7 +98,7 @@ void ParseExec::parse(void)
 		{
 			line = line.substr(0, line.find_first_of(';', 0));
 			instr = line.substr(0, line.find_first_of(' ', 0));
-			switch(this->_convert[instr.c_str()])
+			/*switch(this->_convert[instr.c_str()])
 			{
 				case PUSH:
 					this->push(line.substr(line.find_first_of(' ', 0) + 1, std::string::npos));
@@ -149,7 +151,7 @@ void ParseExec::parse(void)
 				default:
 					throw Exception("Instruction unknown.", this->_nbLine);
 					break;
-			}
+			}*/
 		}
 		this->_nbLine++;
 	}
@@ -178,32 +180,34 @@ void ParseExec::dump(void)
 		std::cout << (*beg)->toString() << std::endl;
 }
 
-void	ParseExec::special(char op)
+void	ParseExec::special(void)
 {
 	const IOperand *	top;
 	const IOperand *	toAdd;
-	double				res;
+	double				res = 0.0f;
 
 	if (this->_stack.size() == 0)
 		throw Exception("Can't calculate, the stack is empty", this->_nbLine);
 	top = this->_stack.front();
 	this->_stack.pop_front();
-	switch(op)
+	switch(this->_currentInstr)
 	{
-		case 'l':
+		case Log:
 			res = ::log(strtod(top->toString().c_str(), NULL));
 			break;
-		case 'e':
+		case Exp:
 			res = exp(strtod(top->toString().c_str(), NULL));
 			break;
-		case 'c':
+		case Cos:
 			res = cos(RAD(strtod(top->toString().c_str(), NULL)));
 			break;
-		case 's':
+		case Sin:
 			res = sin(RAD(strtod(top->toString().c_str(), NULL)));
 			break;
-		case 't':
+		case Tan:
 			res = tan(RAD(strtod(top->toString().c_str(), NULL)));
+			break;
+		default:
 			break;
 	}
 	toAdd = this->_factory->createOperand(Double, std::to_string(res));
@@ -211,7 +215,7 @@ void	ParseExec::special(char op)
 	this->_stack.push_front(toAdd);
 }
 
-void	ParseExec::calculate(char op)
+void	ParseExec::calculate(void)
 {
 	const IOperand *	first;
 	const IOperand *	sec;
@@ -223,22 +227,24 @@ void	ParseExec::calculate(char op)
 	this->_stack.pop_front();
 	sec = this->_stack.front();
 	this->_stack.pop_front();
-	switch (op)
+	switch (this->_currentInstr)
 	{
-		case '+':
+		case Add:
 			res = *sec + *first;
 			break;
-		case '-':
+		case Sub:
 			res = *sec - *first;
 			break;
-		case '*':
+		case Mul:
 			res = *sec * *first;
 			break;
-		case '/':
+		case Div:
 			res = *sec / *first;
 			break;
-		case '%':
+		case Mod:
 			res = *sec % *first;
+			break;
+		default:
 			break;
 	}
 	delete sec;
@@ -265,32 +271,32 @@ void ParseExec::exit(void)
 	this->_exit = true;
 }
 
-void ParseExec::push(const std::string value)
+void ParseExec::push(void)
 {
 	eOperandType		type;
 	const IOperand *	toAdd;
 	bool				err;
 	std::string			nb;
 
-	type = getTypeFromStr(value, &err);
+	type = getTypeFromStr(this->_currentInfo, &err);
 	if (err)
 		throw Exception("Unkwown type.", this->_nbLine);
-	nb = value.substr(value.find_first_of('(', 0) + 1, value.size() - value.find_first_of('(', 0) - 2);
-	if (nb.compare("") == 0 || !isStrDigits(nb) || value.back() != ')')
+	nb = this->_currentInfo.substr(this->_currentInfo.find_first_of('(', 0) + 1, this->_currentInfo.size() - this->_currentInfo.find_first_of('(', 0) - 2);
+	if (nb.compare("") == 0 || !isStrDigits(nb) || this->_currentInfo.back() != ')')
 		throw Exception("Number error.", this->_nbLine);
 	toAdd = this->_factory->createOperand(type, nb);
 	this->_stack.push_front(toAdd);
 }
 
 
-void ParseExec::assert(const std::string value)
+void ParseExec::assert(void)
 {
 	eOperandType		type;
 	const IOperand *	toCheck;
 	const IOperand *	tmp;
 	bool				err;
 
-	type = getTypeFromStr(value, &err);
+	type = getTypeFromStr(this->_currentInfo, &err);
 	if (err)
 		throw Exception("Unknown type.", this->_nbLine);
 	if (this->_stack.size() == 0)
@@ -298,7 +304,7 @@ void ParseExec::assert(const std::string value)
 	toCheck = this->_stack.front();
 	if (toCheck->getType() != type)
 		throw Exception("Assert's wrong, wrong type.", this->_nbLine);
-	tmp = this->_factory->createOperand(type, value.substr(value.find_first_of('(', 0) + 1, value.size() - value.find_first_of('(', 0) - 2));
+	tmp = this->_factory->createOperand(type, this->_currentInfo.substr(this->_currentInfo.find_first_of('(', 0) + 1, this->_currentInfo.size() - this->_currentInfo.find_first_of('(', 0) - 2));
 	if (toCheck->toString().compare(tmp->toString()) != 0)
 		throw Exception("Assert's wrong, wrong value.", this->_nbLine);
 	delete tmp;

@@ -1,5 +1,5 @@
-CC = clang++
-FLAGS = -Wall -Wextra -Werror -std=c++11
+CC = g++
+FLAGS = -Wall -Wextra -Werror -std=c++14
 
 EXEC_NAME = avm
 SRC_FILES = main.cpp \

@@ -6,34 +6,20 @@
 /*   By: jloro <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/03 17:52:59 by jloro             #+#    #+#             */
-/*   Updated: 2019/05/10 11:36:46 by jloro            ###   ########.fr       */
+/*   Updated: 2019/06/05 12:08:58 by jloro            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PARSEEXEC_HPP
 # define PARSEEXEC_HPP
 
+#include <functional>
 # include <list>
-# include <map>
+# include <unordered_map>
 # include "IOperand.hpp"
 # include "Factory.hpp"
 
-# define PUSH 0
-# define POP 1
-# define DUMP 2
-# define ASSERT 3
-# define ADD 4
-# define SUB 5
-# define MUL 6
-# define DIV 7
-# define MOD 8
-# define LOG 9
-# define EXP 10
-# define COS 11
-# define PRINT 12
-# define EXIT 13
-# define TAN 14
-# define SIN 15
+enum instruction {Push, Pop, Dump, Assert, Add, Sub, Mul, Div, Mod, Log, Exp, Cos, Print, Exit, Tan, Sin};
 # define RAD(x) (x * M_PI) / 180.0f
 
 class ParseExec
@@ -50,17 +36,22 @@ class ParseExec
 		ParseExec(const ParseExec & src);
 
 		void	pop(void);
+		void	test(void);
 		void	dump(void);
 		void	print(void);
 		void	exit(void);
-		void	special(char op);
-		void	calculate(char op);
-		void	push(const std::string value);
-		void	assert(const std::string value);
+		void	special(void);
+		void	calculate(void);
+		void	push(void);
+		void	assert(void);
+
+		typedef void (ParseExec::*instrTypedef)(void);
 
 		std::list<const IOperand *>		_stack;
-		std::map<std::string, int>		_convert;
+		std::unordered_map<instruction, instrTypedef>		_map;
 		std::string						_file;
+		std::string						_currentInfo;
+		instruction						_currentInstr;
 		Factory *						_factory;
 		bool							_exit;
 		int								_nbLine;

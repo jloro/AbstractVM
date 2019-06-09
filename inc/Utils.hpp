@@ -6,7 +6,7 @@
 /*   By: jloro <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/06 15:47:14 by jloro             #+#    #+#             */
-/*   Updated: 2019/05/06 15:48:40 by jloro            ###   ########.fr       */
+/*   Updated: 2019/06/09 13:58:22 by jules            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,5 +25,6 @@
 int				strtoint(const char * str);
 eOperandType	getTypeFromStr(const std::string & value, bool * error);
 bool			isStrDigits(const std::string & str);
+std::string		trim(const std::string& str);
 
 #endif

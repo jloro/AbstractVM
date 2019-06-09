@@ -6,7 +6,7 @@
 /*   By: jloro <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/03 13:54:42 by jloro             #+#    #+#             */
-/*   Updated: 2019/05/10 12:39:13 by jloro            ###   ########.fr       */
+/*   Updated: 2019/06/09 15:57:49 by jules            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,8 @@ class Exception : public std::exception
 
 		Exception &	operator=(const Exception & rhs);
 		std::string		_msg;
+		std::string		_ret;
+		const char*		_ptr;
 		int				_line;
 };
 

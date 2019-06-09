@@ -6,7 +6,7 @@
 /*   By: jloro <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/06 15:46:13 by jloro             #+#    #+#             */
-/*   Updated: 2019/05/06 15:49:00 by jloro            ###   ########.fr       */
+/*   Updated: 2019/06/09 16:09:23 by jules            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,3 +51,11 @@ bool isStrDigits(const std::string & str)
 	return std::all_of(str.begin(), str.end(), [](char ch){ return ch == 45 || ch == 46 || (ch > 47 && ch < 58); });
 }
 
+std::string trim(const std::string& str)
+{
+    size_t first = str.find_first_not_of(' ');
+    if (std::string::npos == first)
+        return str;
+    size_t last = str.find_last_not_of(' ');
+    return str.substr(first, (last - first + 1));
+}

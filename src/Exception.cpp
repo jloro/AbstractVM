@@ -6,18 +6,26 @@
 /*   By: jloro <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/03 13:55:07 by jloro             #+#    #+#             */
-/*   Updated: 2019/05/10 12:39:36 by jloro            ###   ########.fr       */
+/*   Updated: 2019/06/09 15:58:31 by jules            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Exception.hpp"
 #include <sstream>
+#include <iostream>
 
 /*
  *  Constructors/Desctructors
  */	
 
-Exception::Exception(const std::string & msg, int line) throw() : std::exception(), _msg(msg), _line(line) {}
+Exception::Exception(const std::string & msg, int line) throw() : std::exception(), _msg(msg), _line(line)
+{
+	this->_ret = "";
+	if (this->_line != -1)
+		this->_ret += "Line " + std::to_string(this->_line) + ": ";
+	this->_ret += this->_msg + "\0";
+	this->_ptr = this->_ret.c_str();
+}
 
 Exception::~Exception() throw() {}
 
@@ -52,11 +60,5 @@ int			Exception::getLine(void) const { return this->_line; }
 
 const char *	Exception::what(void) const throw()
 {
-	std::string			ret;
-
-	ret = "";
-	if (this->_line != -1)
-		ret += "Line " + std::to_string(this->_line) + ": ";
-	ret += this->_msg + "\0";
-	return ret.c_str();
+	return this->_ptr;
 }

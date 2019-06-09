@@ -6,7 +6,7 @@
 /*   By: jloro <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/06 10:09:37 by jloro             #+#    #+#             */
-/*   Updated: 2019/06/05 13:17:18 by jloro            ###   ########.fr       */
+/*   Updated: 2019/06/09 16:07:55 by jules            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ ParseExec::ParseExec(const std::string file) : _stack(), _file(file), _factory(n
 		{"push", &ParseExec::push},
 		{"dump", &ParseExec::dump},
 		{"pop", &ParseExec::pop},
-		{"assert", &ParseExec::assert},
+		{"assert", &ParseExec::assertt},
 		{"add", &ParseExec::calculate},
 		{"sub", &ParseExec::calculate},
 		{"mul", &ParseExec::calculate},
@@ -97,27 +97,13 @@ void ParseExec::parse(void)
 	{
 		if (line.c_str()[0] != ';' && line.compare("") != 0)
 		{
-			line = line.substr(0, line.find_first_of(';', 0));
-			instr = line.substr(0, line.find_first_of(' ', 0));
-			this->_currentInfo = line.substr(line.find_first_of(' ', 0) + 1, std::string::npos);
-
-			std::cout << instr<< std::endl;
-			this->_currentInstr = static_cast<instruction>(std::distance(instructionString.begin(), std::find(instructionString.begin(), instructionString.end(), instr)));
-			//this->_mdap[instr];
-			auto pair = this->_map.find(instr);
-			if (pair != this->_map.end()){
-				(this->(*pair->second))();
-			}
-			else{
-				std::cout << "/shrug"<< std::endl;
-			}
-			/*
-			   case PUSH:
-			   this->push(line.substr(line.find_first_of(' ', 0) + 1, std::string::npos));
-			   break;
+			line = line.substr(0, line.find_first_of(';', 0));//remove comments on current line
+			instr = line.substr(0, line.find_first_of(' ', 0));//get current instruction
+			this->_currentInfo = trim(line.substr(line.find_first_of(' ', 0) + 1, std::string::npos));//get current info for push/print/assert
+			if (std::find(instructionString.begin(), instructionString.end(), instr) == instructionString.end())//check if instr exists
 			   throw Exception("Instruction unknown.", this->_nbLine);
-			   break;
-			   */
+			this->_currentInstr = static_cast<instruction>(std::distance(instructionString.begin(), std::find(instructionString.begin(), instructionString.end(), instr)));//get key for map
+			(this->*_map[instr])();
 		}
 		this->_nbLine++;
 	}
@@ -234,7 +220,6 @@ void ParseExec::print(void)
 
 void ParseExec::exit(void)
 {
-	std::cout << "oui"<< std::endl;
 	this->_exit = true;
 }
 
@@ -248,15 +233,15 @@ void ParseExec::push(void)
 	type = getTypeFromStr(this->_currentInfo, &err);
 	if (err)
 		throw Exception("Unkwown type.", this->_nbLine);
-	nb = this->_currentInfo.substr(this->_currentInfo.find_first_of('(', 0) + 1, this->_currentInfo.size() - this->_currentInfo.find_first_of('(', 0) - 2);
-	if (nb.compare("") == 0 || !isStrDigits(nb) || this->_currentInfo.back() != ')')
+	nb = this->_currentInfo.substr(this->_currentInfo.find_first_of('(', 0) + 1, this->_currentInfo.find_first_of(')', 0) -this->_currentInfo.find_first_of('(', 0) - 1);
+	if (nb.compare("") == 0 || !isStrDigits(nb))
 		throw Exception("Number error.", this->_nbLine);
 	toAdd = this->_factory->createOperand(type, nb);
 	this->_stack.push_front(toAdd);
 }
 
 
-void ParseExec::assert(void)
+void ParseExec::assertt(void)
 {
 	eOperandType		type;
 	const IOperand *	toCheck;
@@ -271,7 +256,7 @@ void ParseExec::assert(void)
 	toCheck = this->_stack.front();
 	if (toCheck->getType() != type)
 		throw Exception("Assert's wrong, wrong type.", this->_nbLine);
-	tmp = this->_factory->createOperand(type, this->_currentInfo.substr(this->_currentInfo.find_first_of('(', 0) + 1, this->_currentInfo.size() - this->_currentInfo.find_first_of('(', 0) - 2));
+	tmp = this->_factory->createOperand(type, this->_currentInfo.substr(this->_currentInfo.find_first_of('(', 0) + 1, this->_currentInfo.find_first_of(')', 0) -this->_currentInfo.find_first_of('(', 0) - 1));
 	if (toCheck->toString().compare(tmp->toString()) != 0)
 		throw Exception("Assert's wrong, wrong value.", this->_nbLine);
 	delete tmp;

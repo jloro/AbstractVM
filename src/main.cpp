@@ -6,17 +6,17 @@
 /*   By: jloro <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/02 17:06:54 by jloro             #+#    #+#             */
-/*   Updated: 2019/05/10 12:09:07 by jloro            ###   ########.fr       */
+/*   Updated: 2019/06/11 11:44:46 by jules            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Operand.hpp"
 #include <iostream>
 #include <string>
 #include <sstream>
 #include <fstream>
-#include "Exception.hpp"
 #include <dirent.h>
+#include "Operand.hpp"
+#include "Exception.hpp"
 #include "ParseExec.hpp"
 
 std::string	readStdin(void)
@@ -37,18 +37,23 @@ std::string	readFile(char * file)
 	std::ifstream		ifs;
 	std::stringstream	ss;
 	std::string			tmp;
+	DIR*				dir;
 
 	ifs.open(file, std::ifstream::in);
 	if ((ifs.rdstate() & std::ifstream::failbit) != 0)
 		throw Exception("File not found", -1);
-	if (opendir(file) != NULL)
+	if ((dir = opendir(file)) != NULL)
+	{
+		closedir(dir);
 		throw Exception("Is a directory", -1);
+	}
 	getline(ifs, tmp);
 	while (ifs.good())
 	{
 		ss << tmp << '\n';
 		getline(ifs, tmp);
 	}
+	ifs.close();
 	return ss.str();
 }
 
@@ -75,7 +80,11 @@ int main(int argc, char **argv)
 	catch (std::exception & e)
 	{
 		std::cout << "Error: " << e.what() << std::endl;
+		while (1)
+			;
 		return 1;
 	}
+	while (1)
+		;
 	return 0;
 }

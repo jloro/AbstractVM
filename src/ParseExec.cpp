@@ -6,7 +6,7 @@
 /*   By: jloro <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/06 10:09:37 by jloro             #+#    #+#             */
-/*   Updated: 2019/06/09 16:07:55 by jules            ###   ########.fr       */
+/*   Updated: 2019/06/11 11:18:13 by jules            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,8 @@
 #include "Exception.hpp"
 #include <sstream>
 #include <iostream>
-#include <iterator>
 #include <algorithm>
 #include "Utils.hpp"
-#include <iomanip>
 
 /*
  *  Constructors/Desctructors

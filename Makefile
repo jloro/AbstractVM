@@ -1,5 +1,5 @@
 CC = g++
-FLAGS = -Wall -Wextra -Werror -std=c++14
+FLAGS = -Wall -Wextra -Werror -std=c++11
 
 EXEC_NAME = avm
 SRC_FILES = main.cpp \

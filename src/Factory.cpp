@@ -6,13 +6,12 @@
 /*   By: jloro <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/03 15:18:58 by jloro             #+#    #+#             */
-/*   Updated: 2019/05/09 13:52:44 by jloro            ###   ########.fr       */
+/*   Updated: 2019/06/11 11:20:28 by jules            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Factory.hpp"
 #include "Operand.hpp"
-#include <stdlib.h>
 
 /*
  *  Constructors/Desctructors

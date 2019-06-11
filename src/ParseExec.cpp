@@ -6,7 +6,7 @@
 /*   By: jloro <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/06 10:09:37 by jloro             #+#    #+#             */
-/*   Updated: 2019/06/11 11:18:13 by jules            ###   ########.fr       */
+/*   Updated: 2019/06/11 14:25:35 by jules            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -231,7 +231,7 @@ void ParseExec::push(void)
 	type = getTypeFromStr(this->_currentInfo, &err);
 	if (err)
 		throw Exception("Unkwown type.", this->_nbLine);
-	nb = this->_currentInfo.substr(this->_currentInfo.find_first_of('(', 0) + 1, this->_currentInfo.find_first_of(')', 0) -this->_currentInfo.find_first_of('(', 0) - 1);
+	nb = this->_currentInfo.substr(this->_currentInfo.find_first_of('(', 0) + 1, this->_currentInfo.find_last_of(')', this->_currentInfo.size() - 1) -this->_currentInfo.find_first_of('(', 0) - 1);
 	if (nb.compare("") == 0 || !isStrDigits(nb))
 		throw Exception("Number error.", this->_nbLine);
 	toAdd = this->_factory->createOperand(type, nb);
@@ -254,7 +254,7 @@ void ParseExec::assertt(void)
 	toCheck = this->_stack.front();
 	if (toCheck->getType() != type)
 		throw Exception("Assert's wrong, wrong type.", this->_nbLine);
-	tmp = this->_factory->createOperand(type, this->_currentInfo.substr(this->_currentInfo.find_first_of('(', 0) + 1, this->_currentInfo.find_first_of(')', 0) -this->_currentInfo.find_first_of('(', 0) - 1));
+	tmp = this->_factory->createOperand(type, this->_currentInfo.substr(this->_currentInfo.find_first_of('(', 0) + 1, this->_currentInfo.find_last_of(')', this->_currentInfo.size() - 1) -this->_currentInfo.find_first_of('(', 0) - 1));
 	if (toCheck->toString().compare(tmp->toString()) != 0)
 		throw Exception("Assert's wrong, wrong value.", this->_nbLine);
 	delete tmp;

@@ -6,7 +6,7 @@
 /*   By: jloro <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/06 10:09:37 by jloro             #+#    #+#             */
-/*   Updated: 2019/06/12 11:24:31 by jloro            ###   ########.fr       */
+/*   Updated: 2019/06/12 14:31:53 by jloro            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,10 @@ void ParseExec::parse(void)
 		{
 			line = line.substr(0, line.find_first_of(';', 0));//remove comments on current line
 			instr = line.substr(0, line.find_first_of(' ', 0));//get current instruction
-			this->_currentInfo = trim(line.substr(line.find_first_of(' ', 0) + 1, std::string::npos));//get current info for push/print/assert
+			if (line.find_first_of(' ', 0) != std::string::npos)
+				this->_currentInfo = trim(line.substr(line.find_first_of(' ', 0) + 1, std::string::npos));//get current info for push/assert
+			else
+				this->_currentInfo = "";
 			if (std::find(instructionString.begin(), instructionString.end(), instr) == instructionString.end())//check if instr exists
 			   throw Exception("Instruction unknown.", this->_nbLine);
 			this->_currentInstr = static_cast<instruction>(std::distance(instructionString.begin(), std::find(instructionString.begin(), instructionString.end(), instr)));//get key for map
@@ -113,6 +116,8 @@ void ParseExec::pop(void)
 {
 	const IOperand *	tmp;
 
+	if (this->_currentInfo.compare("") != 0)
+		throw Exception("Syntax error.", this->_nbLine);
 	if (this->_stack.size() == 0)
 		throw Exception("Pop but stack is empty.", this->_nbLine);
 	tmp = this->_stack.front();
@@ -126,6 +131,8 @@ void ParseExec::dump(void)
 	std::list<const IOperand *>::iterator	beg = this->_stack.begin();
 	std::list<const IOperand *>::iterator	end = this->_stack.end();
 
+	if (this->_currentInfo.compare("") != 0)
+		throw Exception("Syntax error.", this->_nbLine);
 	for (;beg != end;beg++)
 		std::cout << (*beg)->toString() << std::endl;
 }
@@ -136,6 +143,8 @@ void	ParseExec::special(void)
 	const IOperand *	toAdd;
 	double				res = 0.0f;
 
+	if (this->_currentInfo.compare("") != 0)
+		throw Exception("Syntax error.", this->_nbLine);
 	if (this->_stack.size() == 0)
 		throw Exception("Can't calculate, the stack is empty", this->_nbLine);
 	top = this->_stack.front();
@@ -171,6 +180,8 @@ void	ParseExec::calculate(void)
 	const IOperand *	sec;
 	const IOperand *	res;
 
+	if (this->_currentInfo.compare("") != 0)
+		throw Exception("Syntax error.", this->_nbLine);
 	if (this->_stack.size() < 2)
 		throw Exception("Can't calculate, the stack has less than 2 numbers.", this->_nbLine);
 	first = this->_stack.front();
@@ -207,6 +218,8 @@ void ParseExec::print(void)
 {
 	const IOperand *	top;
 
+	if (this->_currentInfo.compare("") != 0)
+		throw Exception("Syntax error.", this->_nbLine);
 	if (this->_stack.size() == 0)
 		throw Exception("Stack empty.", this->_nbLine);
 	top = this->_stack.front();
@@ -218,6 +231,8 @@ void ParseExec::print(void)
 
 void ParseExec::exit(void)
 {
+	if (this->_currentInfo.compare("") != 0)
+		throw Exception("Syntax error.", this->_nbLine);
 	this->_exit = true;
 }
 
@@ -228,7 +243,7 @@ void ParseExec::push(void)
 	bool				err;
 	std::string			nb;
 
-	if (this->_currentInfo.find(")") == std::string::npos || this->_currentInfo.find("(") == std::string::npos)
+	if (this->_currentInfo.find(")") == std::string::npos || this->_currentInfo.find("(") == std::string::npos || this->_currentInfo.substr(this->_currentInfo.find_first_of(')', 0) + 1, std::string::npos).compare("") != 0)
 		throw Exception("Syntax error.", this->_nbLine);
 	type = getTypeFromStr(this->_currentInfo, &err);
 	if (err)
@@ -248,8 +263,9 @@ void ParseExec::assert(void)
 	const IOperand *	tmp;
 	bool				err;
 
-	if (this->_currentInfo.find(")") == std::string::npos || this->_currentInfo.find("(") == std::string::npos)
+	if (this->_currentInfo.find(")") == std::string::npos || this->_currentInfo.find("(") == std::string::npos || this->_currentInfo.substr(this->_currentInfo.find_first_of(')', 0) + 1, std::string::npos).compare("") != 0)
 		throw Exception("Syntax error.", this->_nbLine);
+	std::cout <<"|"<<this->_currentInfo.substr(this->_currentInfo.find_first_of(')', 0) + 1, std::string::npos) << "|"<< std::endl;
 	type = getTypeFromStr(this->_currentInfo, &err);
 	if (err)
 		throw Exception("Unknown type.", this->_nbLine);

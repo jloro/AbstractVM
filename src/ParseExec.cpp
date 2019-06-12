@@ -6,7 +6,7 @@
 /*   By: jloro <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/06 10:09:37 by jloro             #+#    #+#             */
-/*   Updated: 2019/06/12 14:31:53 by jloro            ###   ########.fr       */
+/*   Updated: 2019/06/12 15:01:59 by jloro            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -265,7 +265,6 @@ void ParseExec::assert(void)
 
 	if (this->_currentInfo.find(")") == std::string::npos || this->_currentInfo.find("(") == std::string::npos || this->_currentInfo.substr(this->_currentInfo.find_first_of(')', 0) + 1, std::string::npos).compare("") != 0)
 		throw Exception("Syntax error.", this->_nbLine);
-	std::cout <<"|"<<this->_currentInfo.substr(this->_currentInfo.find_first_of(')', 0) + 1, std::string::npos) << "|"<< std::endl;
 	type = getTypeFromStr(this->_currentInfo, &err);
 	if (err)
 		throw Exception("Unknown type.", this->_nbLine);

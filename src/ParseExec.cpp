@@ -6,7 +6,7 @@
 /*   By: jloro <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/06 10:09:37 by jloro             #+#    #+#             */
-/*   Updated: 2019/06/11 14:25:35 by jules            ###   ########.fr       */
+/*   Updated: 2019/06/12 11:24:31 by jloro            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ ParseExec::ParseExec(const std::string file) : _stack(), _file(file), _factory(n
 		{"push", &ParseExec::push},
 		{"dump", &ParseExec::dump},
 		{"pop", &ParseExec::pop},
-		{"assert", &ParseExec::assertt},
+		{"assert", &ParseExec::assert},
 		{"add", &ParseExec::calculate},
 		{"sub", &ParseExec::calculate},
 		{"mul", &ParseExec::calculate},
@@ -228,6 +228,8 @@ void ParseExec::push(void)
 	bool				err;
 	std::string			nb;
 
+	if (this->_currentInfo.find(")") == std::string::npos || this->_currentInfo.find("(") == std::string::npos)
+		throw Exception("Syntax error.", this->_nbLine);
 	type = getTypeFromStr(this->_currentInfo, &err);
 	if (err)
 		throw Exception("Unkwown type.", this->_nbLine);
@@ -239,13 +241,15 @@ void ParseExec::push(void)
 }
 
 
-void ParseExec::assertt(void)
+void ParseExec::assert(void)
 {
 	eOperandType		type;
 	const IOperand *	toCheck;
 	const IOperand *	tmp;
 	bool				err;
 
+	if (this->_currentInfo.find(")") == std::string::npos || this->_currentInfo.find("(") == std::string::npos)
+		throw Exception("Syntax error.", this->_nbLine);
 	type = getTypeFromStr(this->_currentInfo, &err);
 	if (err)
 		throw Exception("Unknown type.", this->_nbLine);

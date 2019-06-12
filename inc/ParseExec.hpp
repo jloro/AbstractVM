@@ -6,7 +6,7 @@
 /*   By: jloro <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/03 17:52:59 by jloro             #+#    #+#             */
-/*   Updated: 2019/06/09 13:46:06 by jules            ###   ########.fr       */
+/*   Updated: 2019/06/12 10:44:52 by jloro            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ class ParseExec
 		void	special(void);
 		void	calculate(void);
 		void	push(void);
-		void	assertt(void);
+		void	assert(void);
 
 		typedef void (ParseExec::*instrTypedef)(void);
 

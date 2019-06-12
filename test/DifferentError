@@ -1,30 +1,48 @@
-----------------
+----------------//Pop but stack empty
 push int32(90)
 pop
 pop
 exit
 ;;
-----------------
+----------------//Print with empty stack
 print
 exit
 ;;
-----------------
+---------------- //Not error, just print after exit
 push int8(9)
 exit
 print
 ;;
-----------------
+----------------//Asset with empty stack
 assert int8(9)
 exit
 ;;
-----------------
+----------------//Calculate with 1 number in stack
 push int8(9)
 div
 exit
 ;;
-----------------
+----------------//Div by 0
 push int8(9)
 push int8(0)
 div
 exit
 ;;
+----------------//missing ')'
+push int16(32 ;)
+exit
+;;
+----------------//Extraneous ')'
+push int16(32))
+exit
+;;
+----------------//Instruction unknown
+pu int16(32)
+exit
+;;
+----------------//Don't have exit
+push int8(120)
+push int16(9)
+add
+;;
+----------------

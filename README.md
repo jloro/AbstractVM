@@ -47,7 +47,7 @@ The VM can read instructions from 2 different way :
  
  - Div : Unstacks the first two values on the stack, divides them, then stacks the result.
  
- - Mod : nstacks the first two values on the stack, calculates the modulus, thenstacks the result.
+ - Mod : Unstacks the first two values on the stack, calculates the modulus, then stacks the result.
  
  - Print : Asserts that the value at the top of the stack is an 8-bit integer then interprets it as an ASCII value and displays the corresponding character on the standard output.
  
